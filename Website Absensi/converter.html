@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3KA33Convert - Platform Konversi Dokumen Publik</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background: #090d16;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            color: #1e293b;
+            position: relative;
+        }
+
+        /* BACKGROUND AURORA DINAMIS */
+        .aurora-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+            background: #f8fafc;
+        }
+
+        .aurora-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(90px);
+            opacity: 0.5;
+            animation: moveOrb 12s infinite alternate ease-in-out;
+        }
+
+        .orb-1 {
+            width: 500px;
+            height: 500px;
+            background: #3b82f6;
+            top: -10%;
+            left: -10%;
+        }
+
+        .orb-2 {
+            width: 600px;
+            height: 600px;
+            background: #ec4899;
+            bottom: -15%;
+            right: -10%;
+            animation-delay: -4s;
+        }
+
+        .orb-3 {
+            width: 400px;
+            height: 400px;
+            background: #8b5cf6;
+            top: 30%;
+            right: 25%;
+            animation-delay: -8s;
+        }
+
+        @keyframes moveOrb {
+            0% {
+                transform: translate(0px, 0px) scale(1);
+            }
+
+            50% {
+                transform: translate(50px, 40px) scale(1.08);
+            }
+
+            100% {
+                transform: translate(-40px, -50px) scale(0.92);
+            }
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 10px 0 30px rgba(0, 0, 0, 0.03);
+            z-index: 20;
+            border-right: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .sidebar-header {
+            padding: 25px 20px;
+            font-size: 20px;
+            font-weight: 800;
+            color: #0f172a;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-header span {
+            color: #2563eb;
+        }
+
+        .sidebar-header i {
+            color: #e11d48;
+        }
+
+        .menu-list {
+            list-style: none;
+            padding: 20px 15px;
+            flex: 1;
+        }
+
+        .menu-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            color: #94a3b8;
+            letter-spacing: 1.5px;
+            padding: 0 15px 8px;
+            font-weight: 800;
+        }
+
+        .menu-list li {
+            padding: 12px 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s ease;
+            font-size: 13px;
+            font-weight: 600;
+            color: #64748b;
+            border-radius: 10px;
+            margin-bottom: 4px;
+        }
+
+        .menu-list li:hover {
+            background-color: #f1f5f9;
+            color: #2563eb;
+        }
+
+        .menu-list li.active {
+            background-color: #2563eb;
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2);
+        }
+
+        .creator-badge {
+            padding: 15px 20px;
+            font-size: 11px;
+            color: #64748b;
+            border-top: 1px solid #f1f5f9;
+            background: #f8fafc;
+        }
+
+        .creator-badge strong {
+            color: #0f172a;
+            display: block;
+            font-size: 12px;
+        }
+
+        /* MAIN AREA */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            z-index: 10;
+        }
+
+        .topbar {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(15px);
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 35px;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+            z-index: 10;
+        }
+
+        .topbar-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .badge-open {
+            background: #dcfce7;
+            color: #166534;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            border: 1px solid #bbf7d0;
+        }
+
+        .content {
+            padding: 30px 35px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        /* BANNER */
+        .welcome-banner {
+            background: linear-gradient(135deg, #1e40af, #2563eb);
+            border-radius: 16px;
+            padding: 25px 30px;
+            color: white;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.2);
+        }
+
+        .welcome-banner h1 {
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .welcome-banner p {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        /* TOOLS GRID */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            gap: 16px;
+            margin-bottom: 25px;
+        }
+
+        .tool-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 14px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.1);
+            border-color: #2563eb;
+            background: #ffffff;
+        }
+
+        .tool-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: white;
+            margin-bottom: 12px;
+        }
+
+        .tool-card h3 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+
+        .tool-card p {
+            font-size: 11px;
+            color: #64748b;
+            line-height: 1.4;
+        }
+
+        /* WORKSPACE */
+        .workspace-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+            border: 1px solid #e2e8f0;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .btn-back {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            color: #475569;
+            margin-bottom: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+
+        .btn-back:hover {
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+
+        .upload-area {
+            padding: 40px 25px;
+            text-align: center;
+            border: 2px dashed #cbd5e1;
+            border-radius: 12px;
+            background: #f8fafc;
+            position: relative;
+        }
+
+        .upload-icon {
+            font-size: 40px;
+            color: #94a3b8;
+            margin-bottom: 10px;
+        }
+
+        .btn-upload {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 26px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px;
+            box-shadow: 0 6px 15px rgba(37, 99, 235, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-upload input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        /* LOADING & RESULT */
+        .processing-box,
+        .result-box {
+            display: none;
+            padding: 35px;
+            text-align: center;
+        }
+
+        .spinner {
+            font-size: 40px;
+            color: #2563eb;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .progress-bar {
+            width: 100%;
+            background: #e2e8f0;
+            height: 6px;
+            border-radius: 10px;
+            margin-top: 15px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #10b981;
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .btn-download {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 12px 26px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 15px;
+            text-decoration: none;
+            box-shadow: 0 6px 15px rgba(16, 185, 129, 0.2);
+        }
+
+        .btn-download:hover {
+            background: #059669;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="aurora-bg">
+        <div class="aurora-orb orb-1"></div>
+        <div class="aurora-orb orb-2"></div>
+        <div class="aurora-orb orb-3"></div>
+    </div>
+
+    <aside class="sidebar">
+        <div class="sidebar-header"><i class="fa-solid fa-wand-magic-sparkles"></i> 3KA33<span>Convert</span></div>
+        <div class="menu-list">
+            <div class="menu-label">Menu Utama</div>
+            <li class="menu-item active" onclick="tampilMenuUtama()"><i class="fa-solid fa-grid-2"></i> Semua Alat PDF
+            </li>
+            <li class="menu-item" onclick="tampilRiwayat()"><i class="fa-solid fa-clock-rotate-left"></i> Riwayat File
+            </li>
+            <li class="menu-item" onclick="tampilTentang()"><i class="fa-solid fa-circle-info"></i> Tentang Website</li>
+        </div>
+        <div class="creator-badge">
+            Dibuat oleh:
+            <strong>Dheriel Aprillio Putro</strong>
+        </div>
+    </aside>
+
+    <div class="main-content">
+        <header class="topbar">
+            <div class="topbar-title" id="judulHalaman">Pusat Alat Konversi Dokumen</div>
+            <div class="badge-open"><i class="fa-solid fa-globe"></i> Publik & Open Source</div>
+        </header>
+
+        <main class="content">
+
+            <!-- VIEW 1: GRID ALAT -->
+            <div id="view-grid" class="fade-in">
+                <div class="welcome-banner">
+                    <h1>Selamat Datang di 3KA33Convert ⚡</h1>
+                    <p>Platform pengolah dokumen tercepat tanpa batasan dan tanpa proses masuk akun.</p>
+                </div>
+
+                <div class="tools-grid">
+                    <div class="tool-card"
+                        onclick="pilihAlat('merge', 'Merge PDF', 'Gabungkan beberapa file PDF.', '.pdf', true)">
+                        <div class="tool-icon" style="background: #e11d48;"><i class="fa-solid fa-object-ungroup"></i>
+                        </div>
+                        <h3>Merge PDF</h3>
+                        <p>Gabungkan file PDF sesuai urutan.</p>
+                    </div>
+                    <div class="tool-card"
+                        onclick="pilihAlat('split', 'Split PDF', 'Pisahkan halaman PDF.', '.pdf', false)">
+                        <div class="tool-icon" style="background: #ea580c;"><i class="fa-solid fa-scissors"></i></div>
+                        <h3>Split PDF</h3>
+                        <p>Ambil halaman PDF spesifik.</p>
+                    </div>
+                    <div class="tool-card"
+                        onclick="pilihAlat('compress', 'Compress PDF', 'Kecilkan ukuran file PDF.', '.pdf', false)">
+                        <div class="tool-icon" style="background: #16a34a;"><i class="fa-solid fa-compress"></i></div>
+                        <h3>Compress PDF</h3>
+                        <p>Optimalkan ukuran file PDF.</p>
+                    </div>
+                    <div class="tool-card"
+                        onclick="pilihAlat('pdf2word', 'PDF to Word', 'Ubah PDF ke format DOCX.', '.pdf', false)">
+                        <div class="tool-icon" style="background: #2563eb;"><i class="fa-regular fa-file-word"></i>
+                        </div>
+                        <h3>PDF to Word</h3>
+                        <p>Konversi dokumen ke Word.</p>
+                    </div>
+                    <div class="tool-card"
+                        onclick="pilihAlat('pdf2pptx', 'PDF to PowerPoint', 'Ubah PDF ke slide PPTX.', '.pdf', false)">
+                        <div class="tool-icon" style="background: #dc2626;"><i
+                                class="fa-regular fa-file-powerpoint"></i></div>
+                        <h3>PDF to PowerPoint</h3>
+                        <p>Ubah file PDF ke presentasi.</p>
+                    </div>
+                    <div class="tool-card"
+                        onclick="pilihAlat('pdf2xlsx', 'PDF to Excel', 'Ekstrak tabel ke Excel.', '.pdf', false)">
+                        <div class="tool-icon" style="background: #059669;"><i class="fa-regular fa-file-excel"></i>
+                        </div>
+                        <h3>PDF to Excel</h3>
+                        <p>Tarik data tabel ke XLSX.</p>
+                    </div>
+                    <div class="tool-card"
+                        onclick="pilihAlat('word2pdf', 'Word to PDF', 'Ubah DOCX Word ke PDF.', '.doc,.docx', false)">
+                        <div class="tool-icon" style="background: #0284c7;"><i class="fa-regular fa-file-pdf"></i></div>
+                        <h3>Word to PDF</h3>
+                        <p>Konversi Word ke format PDF.</p>
+                    </div>
+                    <div class="tool-card"
+                        onclick="pilihAlat('pptx2pdf', 'PowerPoint to PDF', 'Ubah PPTX slide ke PDF.', '.ppt,.pptx', false)">
+                        <div class="tool-icon" style="background: #ea580c;"><i class="fa-regular fa-file-pdf"></i></div>
+                        <h3>PowerPoint to PDF</h3>
+                        <p>Ubah slide presentasi ke PDF.</p>
+                    </div>
+                    <div class="tool-card"
+                        onclick="pilihAlat('xlsx2pdf', 'Excel to PDF', 'Ubah spreadsheet ke PDF.', '.xls,.xlsx', false)">
+                        <div class="tool-icon" style="background: #16a34a;"><i class="fa-regular fa-file-pdf"></i></div>
+                        <h3>Excel to PDF</h3>
+                        <p>Konversi lembar kerja ke PDF.</p>
+                    </div>
+                    <div class="tool-card"
+                        onclick="pilihAlat('pdf2jpg', 'PDF to JPG', 'Ubah halaman PDF jadi gambar.', '.pdf', false)">
+                        <div class="tool-icon" style="background: #7c3aed;"><i class="fa-regular fa-image"></i></div>
+                        <h3>PDF to JPG</h3>
+                        <p>Ekstrak halaman jadi gambar.</p>
+                    </div>
+                    <div class="tool-card"
+                        onclick="pilihAlat('jpg2pdf', 'JPG to PDF', 'Ubah gambar jadi dokumen PDF.', '.jpg,.jpeg,.png', true)">
+                        <div class="tool-icon" style="background: #d97706;"><i class="fa-solid fa-images"></i></div>
+                        <h3>JPG to PDF</h3>
+                        <p>Gabungkan kumpulan gambar.</p>
+                    </div>
+                    <div class="tool-card"
+                        onclick="pilihAlat('rotate', 'Rotate PDF', 'Putar orientasi halaman PDF.', '.pdf', false)">
+                        <div class="tool-icon" style="background: #4f46e5;"><i class="fa-solid fa-rotate"></i></div>
+                        <h3>Rotate PDF</h3>
+                        <p>Atur rotasi posisi halaman.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW 2: WORKSPACE -->
+            <div id="view-workspace" class="hidden fade-in">
+                <button class="btn-back" onclick="tampilMenuUtama()"><i class="fa-solid fa-arrow-left"></i>
+                    Kembali</button>
+
+                <div class="workspace-panel">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <h2 id="wsTitle" style="color: #0f172a; font-size: 20px; font-weight: 800;">Judul Alat</h2>
+                        <p id="wsDesc" style="color: #64748b; font-size: 12px; margin-top: 3px;">Deskripsi alat</p>
+                    </div>
+
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                        <div style="font-size: 14px; font-weight: 700; color: #1e293b;">Pilih atau Tarik File Anda ke
+                            Sini</div>
+                        <button class="btn-upload">
+                            <i class="fa-solid fa-folder-open"></i> Cari Dokumen
+                            <input type="file" id="fileInput" onchange="prosesKonversi()">
+                        </button>
+                    </div>
+
+                    <div class="processing-box" id="processingBox">
+                        <i class="fa-solid fa-arrows-rotate spinner"></i>
+                        <h2 style="color:#0f172a; font-size: 16px;">Memproses Dokumen...</h2>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <p id="progressText" style="margin-top:8px; font-weight:bold; color:#2563eb; font-size:13px;">0%
+                        </p>
+                    </div>
+
+                    <div class="result-box" id="resultBox">
+                        <i class="fa-solid fa-circle-check"
+                            style="font-size: 45px; color: #10b981; margin-bottom: 12px;"></i>
+                        <h2 style="color:#0f172a; font-size: 18px;">Berhasil Dikonversi!</h2>
+                        <p style="color:#64748b; margin-top:3px; font-size: 12px;">File Anda sudah siap dan tersimpan di
+                            riwayat file.</p>
+                        <a href="#" id="btnDownloadAsli" class="btn-download" target="_blank">
+                            <i class="fa-solid fa-download"></i> Unduh File Hasil
+                        </a>
+                        <div style="margin-top: 15px;">
+                            <a onclick="resetWorkspace()"
+                                style="color: #2563eb; cursor: pointer; font-weight: 600; font-size: 12px;">Konversi
+                                File Lain</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW 3: RIWAYAT -->
+            <div id="view-riwayat" class="hidden fade-in">
+                <button class="btn-back" onclick="tampilMenuUtama()"><i class="fa-solid fa-arrow-left"></i>
+                    Kembali</button>
+                <div class="workspace-panel">
+                    <h2 style="color:#0f172a; margin-bottom: 4px; font-size: 18px;">Riwayat File</h2>
+                    <p style="color:#64748b; margin-bottom: 18px; font-size: 12px;">Daftar dokumen yang pernah Anda
+                        konversi.</p>
+
+                    <div style="overflow-x:auto;">
+                        <table style="width: 100%; border-collapse: collapse; min-width: 550px;">
+                            <thead>
+                                <tr style="background:#f8fafc; text-align:left;">
+                                    <th style="padding:10px 12px; color:#475569; font-size: 11px;">Waktu</th>
+                                    <th style="padding:10px 12px; color:#475569; font-size: 11px;">Nama Dokumen</th>
+                                    <th style="padding:10px 12px; color:#475569; font-size: 11px;">Alat</th>
+                                    <th style="padding:10px 12px; color:#475569; font-size: 11px;">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelRiwayat"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW 4: TENTANG WEBSITE -->
+            <div id="view-tentang" class="hidden fade-in">
+                <button class="btn-back" onclick="tampilMenuUtama()"><i class="fa-solid fa-arrow-left"></i>
+                    Kembali</button>
+
+                <div class="workspace-panel" style="max-width: 700px;">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <div
+                            style="width: 50px; height: 50px; background: #eff6ff; color: #2563eb; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin: 0 auto 12px;">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        </div>
+                        <h2 style="color: #0f172a; font-size: 20px; font-weight: 800;">Tentang 3KA33Convert</h2>
+                        <p style="color: #64748b; font-size: 12px; margin-top: 3px;">Platform Konversi Dokumen Modern,
+                            Publik, & Tanpa Batas</p>
+                    </div>
+
+                    <div
+                        style="background: #f8fafc; border-radius: 12px; padding: 20px; border: 1px solid #e2e8f0; margin-bottom: 15px;">
+                        <h3 style="font-size: 14px; font-weight: 700; color: #1e293b; margin-bottom: 8px;"><i
+                                class="fa-solid fa-bullseye" style="color: #2563eb; margin-right: 6px;"></i> Misi Kami
+                        </h3>
+                        <p style="font-size: 12px; color: #475569; line-height: 1.5;">
+                            3KA33Convert diciptakan untuk mempermudah siapa saja—baik mahasiswa, pekerja, maupun
+                            masyarakat umum—dalam mengonversi dan memanipulasi dokumen digital secara instan, gratis,
+                            tanpa perlu mendaftar akun atau terganggu iklan.
+                        </p>
+                    </div>
+
+                    <div
+                        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 20px;">
+                        <div
+                            style="background: #f8fafc; padding: 16px; border-radius: 10px; border: 1px solid #e2e8f0;">
+                            <i class="fa-solid fa-bolt"
+                                style="color: #e11d48; font-size: 16px; margin-bottom: 8px;"></i>
+                            <h4 style="font-size: 13px; font-weight: 700; color: #0f172a; margin-bottom: 3px;">Tanpa
+                                Login</h4>
+                            <p style="font-size: 11px; color: #64748b;">Langsung unggah file dan proses detik itu juga
+                                tanpa registrasi.</p>
+                        </div>
+                        <div
+                            style="background: #f8fafc; padding: 16px; border-radius: 10px; border: 1px solid #e2e8f0;">
+                            <i class="fa-solid fa-shield-halved"
+                                style="color: #10b981; font-size: 16px; margin-bottom: 8px;"></i>
+                            <h4 style="font-size: 13px; font-weight: 700; color: #0f172a; margin-bottom: 3px;">Privasi
+                                Aman</h4>
+                            <p style="font-size: 11px; color: #64748b;">Riwayat konversi dikelola secara lokal langsung
+                                di browser perangkat Anda.</p>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; padding-top: 15px; border-top: 1px solid #f1f5f9;">
+                        <p style="font-size: 11px; color: #94a3b8; margin-bottom: 3px;">Dikembangkan dengan penuh
+                            dedikasi oleh</p>
+                        <strong style="font-size: 14px; color: #0f172a;">Dheriel Aprillio Putro</strong>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        let currentToolKey = "";
+        let currentToolName = "";
+
+        window.tampilMenuUtama = () => {
+            document.getElementById('view-grid').classList.remove('hidden');
+            document.getElementById('view-workspace').classList.add('hidden');
+            document.getElementById('view-riwayat').classList.add('hidden');
+            document.getElementById('view-tentang').classList.add('hidden');
+            document.getElementById('judulHalaman').innerText = "Pusat Alat Konversi Dokumen";
+        };
+
+        window.tampilRiwayat = () => {
+            document.getElementById('view-grid').classList.add('hidden');
+            document.getElementById('view-workspace').classList.add('hidden');
+            document.getElementById('view-riwayat').classList.remove('hidden');
+            document.getElementById('view-tentang').classList.add('hidden');
+            document.getElementById('judulHalaman').innerText = "Riwayat File";
+            muatRiwayatLokal();
+        };
+
+        window.tampilTentang = () => {
+            document.getElementById('view-grid').classList.add('hidden');
+            document.getElementById('view-workspace').classList.add('hidden');
+            document.getElementById('view-riwayat').classList.add('hidden');
+            document.getElementById('view-tentang').classList.remove('hidden');
+            document.getElementById('judulHalaman').innerText = "Tentang Website";
+        };
+
+        window.pilihAlat = (key, name, desc, acceptType, isMultiple) => {
+            currentToolKey = key;
+            currentToolName = name;
+            document.getElementById('wsTitle').innerText = name;
+            document.getElementById('wsDesc').innerText = desc;
+
+            const fileInput = document.getElementById('fileInput');
+            fileInput.accept = acceptType;
+            fileInput.multiple = isMultiple;
+
+            document.getElementById('view-grid').classList.add('hidden');
+            document.getElementById('view-workspace').classList.remove('hidden');
+            resetWorkspace();
+        };
+
+        window.resetWorkspace = () => {
+            document.getElementById('fileInput').value = "";
+            document.getElementById('uploadArea').style.display = 'block';
+            document.getElementById('processingBox').style.display = 'none';
+            document.getElementById('resultBox').style.display = 'none';
+            document.getElementById('progressFill').style.width = "0%";
+            document.getElementById('progressText').innerText = "0%";
+        };
+
+        const getApiEndpoint = (key) => {
+            switch (key) {
+                case 'merge': return 'https://v2.convertapi.com/convert/pdf/to/merge';
+                case 'split': return 'https://v2.convertapi.com/convert/pdf/to/split';
+                case 'compress': return 'https://v2.convertapi.com/convert/pdf/to/compress';
+                case 'pdf2word': return 'https://v2.convertapi.com/convert/pdf/to/docx';
+                case 'pdf2pptx': return 'https://v2.convertapi.com/convert/pdf/to/pptx';
+                case 'pdf2xlsx': return 'https://v2.convertapi.com/convert/pdf/to/xlsx';
+                case 'word2pdf': return 'https://v2.convertapi.com/convert/docx/to/pdf';
+                case 'pptx2pdf': return 'https://v2.convertapi.com/convert/pptx/to/pdf';
+                case 'xlsx2pdf': return 'https://v2.convertapi.com/convert/xlsx/to/pdf';
+                case 'pdf2jpg': return 'https://v2.convertapi.com/convert/pdf/to/jpg';
+                case 'jpg2pdf': return 'https://v2.convertapi.com/convert/jpg/to/pdf';
+                case 'rotate': return 'https://v2.convertapi.com/convert/pdf/to/rotate';
+                default: return 'https://v2.convertapi.com/convert/pdf/to/docx';
+            }
+        };
+
+        window.prosesKonversi = async () => {
+            const fileInput = document.getElementById('fileInput');
+            if (fileInput.files.length === 0) return;
+
+            document.getElementById('uploadArea').style.display = 'none';
+            document.getElementById('processingBox').style.display = 'block';
+
+            let progress = 0;
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            const interval = setInterval(() => {
+                if (progress < 90) progress += 5;
+                progressFill.style.width = progress + '%';
+                progressText.innerText = progress + '%';
+            }, 300);
+
+            let formData = new FormData();
+            for (let i = 0; i < fileInput.files.length; i++) {
+                formData.append('File', fileInput.files[i]);
+            }
+            formData.append('StoreFile', 'true');
+
+            try {
+                const tokenAPI = 'rkUDb7Wr2xTwH85rcIoCX3jXsY0ty9tN';
+                const apiUrl = getApiEndpoint(currentToolKey);
+
+                let response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + tokenAPI },
+                    body: formData
+                });
+
+                let result = await response.json();
+                clearInterval(interval);
+
+                if (response.ok && result.Files && result.Files.length > 0) {
+                    let fileUrlDownload = result.Files[0].Url || result.Files[0].url;
+                    if (fileUrlDownload && fileUrlDownload.startsWith('//')) {
+                        fileUrlDownload = 'https:' + fileUrlDownload;
+                    }
+
+                    progressFill.style.width = '100%';
+                    progressText.innerText = '100%';
+
+                    setTimeout(() => {
+                        document.getElementById('processingBox').style.display = 'none';
+                        document.getElementById('resultBox').style.display = 'block';
+                        document.getElementById('btnDownloadAsli').href = fileUrlDownload;
+                        document.getElementById('btnDownloadAsli').download = result.Files[0].FileName || 'Hasil_Convert';
+                    }, 400);
+
+                    let riwayatList = JSON.parse(localStorage.getItem('riwayat_3ka33') || '[]');
+                    riwayatList.unshift({
+                        nama_file: fileInput.files[0].name + (fileInput.files.length > 1 ? ` (+${fileInput.files.length - 1} file)` : ''),
+                        alat: currentToolName,
+                        url: fileUrlDownload,
+                        waktu: new Date().toLocaleString("id-ID"),
+                        timestamp: Date.now()
+                    });
+                    localStorage.setItem('riwayat_3ka33', JSON.stringify(riwayatList));
+
+                } else {
+                    alert("Gagal memproses file: " + (result.Message || "Format atau parameter tidak sesuai."));
+                    resetWorkspace();
+                }
+            } catch (error) {
+                clearInterval(interval);
+                alert("Terjadi kesalahan koneksi: " + error.message);
+                resetWorkspace();
+            }
+        };
+
+        window.muatRiwayatLokal = function () {
+            const tbody = document.getElementById('tabelRiwayat');
+            let riwayatList = JSON.parse(localStorage.getItem('riwayat_3ka33') || '[]');
+
+            if (riwayatList.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:25px; color:#94a3b8;">Belum ada riwayat file.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = "";
+            riwayatList.forEach(data => {
+                tbody.innerHTML += `
+                    <tr style="border-bottom:1px solid #f1f5f9;">
+                        <td style="padding:10px 12px; color:#64748b; font-size:11px;">${data.waktu}</td>
+                        <td style="padding:10px 12px; font-weight:600; color:#0f172a; font-size:12px;">${data.nama_file}</td>
+                        <td style="padding:10px 12px;"><span style="color:#2563eb; background:#eff6ff; padding:3px 8px; border-radius:5px; font-size:10px; font-weight:bold;">${data.alat}</span></td>
+                        <td style="padding:10px 12px;">
+                            <a href="${data.url}" target="_blank" style="background:#f1f5f9; color:#0f172a; padding:5px 10px; border-radius:5px; text-decoration:none; font-size:11px; font-weight:600; border: 1px solid #e2e8f0;"><i class="fa-solid fa-cloud-arrow-down"></i> Unduh</a>
+                        </td>
+                    </tr>
+                `;
+            });
+        };
+    </script>
+</body>
+
+</html>

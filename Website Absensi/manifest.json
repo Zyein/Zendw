@@ -1,0 +1,15 @@
+{
+    "name": "3KA33Convert",
+    "short_name": "3KA33Convert",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#090d16",
+    "theme_color": "#2563eb",
+    "icons": [
+        {
+            "src": "logo-gunadarma.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}
